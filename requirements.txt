@@ -1,1 +1,1 @@
-pip pyotp
+pyotp
