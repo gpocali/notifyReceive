@@ -1,0 +1,57 @@
+#!/usr/bin/python
+import socket
+import struct
+import sys
+import os
+import json
+import pyotp
+import time
+
+# Settings
+multicast = os.getenv('notify_multicast', '239.0.0.1') #data['config']['multicastIp']
+port = ('', os.getenv('notify_port', '10000')) #data['config']['multicastPort']
+totp = pyotp.TOTP(os.getenv('notify_totp_seed', 'base32secret3232')) #data['config']['totpKey']
+# End Settings
+
+lastStatus = "Normal"
+
+# Create the socket
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+# Bind to the server address
+sock.bind(port)
+
+# Set Socket timeout so that after 2 minutes 30 seconds loop once
+sock.settimeout(150)
+
+# Tell the operating system to add the socket to the multicast group
+# on all interfaces.
+group = socket.inet_aton(multicast)
+mreq = struct.pack('4sL', group, socket.INADDR_ANY)
+sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
+
+socketErrorCount = 0
+
+# Receive/respond loop
+while True:
+	print >>sys.stderr, '\nwaiting to receive message'
+	try:
+		data, address = sock.recvfrom(1024)
+	except socket.timeout:
+		lastStatus = "Normal"
+	except socket.error as msg:
+		print >>sys.stderr, 'Socket Error: ', msg
+	print >>sys.stderr, 'received %s bytes from %s' % (len(data), address)
+	print >>sys.stderr, data
+	
+	print >>sys.stderr, 'sending acknowledgement to', address
+	sock.sendto('ack', address)
+	
+	o = json.loads(data)
+	if totp.verify(o['challenge']):
+		print >>sys.stderr, o['status']
+		if o['status'] != "Normal" or o['status'] != lastStatus:
+			# Play message audio if not Normal status
+			os.system('killall aplay 2>/dev/null; pico2wave -w /tmp/alert.wav "'+o['message']+'" && aplay /tmp/alert.wav && rm /tmp/alert.wav &')
+		lastStatus = o['status']
+		
