@@ -11,7 +11,8 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 #pyotp
 
-RUN sed -i '/^#.* non-free /s/^#//' /etc/apt/sources.list
+#RUN sed -i '/^#.* non-free /s/^#//' /etc/apt/sources.list
+RUN cat /etc/apt/sources.list | grep non-free
 RUN apt-get update; apt-get -y install python-alsaaudio libav-tools libttspico-utils
 
 ENTRYPOINT ["python", "./notifyReceive", "start"]
