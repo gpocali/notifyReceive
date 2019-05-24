@@ -16,4 +16,9 @@ notify_totp_seed=base32secret3232
 
 ```
 
-This docker is currently in Beta, meaning that while core functionality has been tested, there is potential for bugs or anomalies that were not anticipated being present in runtime that may cause the docker to exit unexpectedly. There is no warranty or guarantees expressed or implied with the use of this docker or its constituent code.
+## Example Run Command
+```
+docker run -env notify_multicast=239.0.0.1 -env notify_port=10000 -env notify_totp_seed=base32secret3232 --device /dev/snd gpocali/notifyreceive:latest
+```
+
+This docker is currently in Alpha, meaning that while core functionality has been tested, there is potential for bugs or anomalies that were not anticipated being present in runtime that may cause the docker to exit unexpectedly. There is no warranty or guarantees expressed or implied with the use of this docker or its constituent code.

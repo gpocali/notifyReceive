@@ -52,6 +52,7 @@ while True:
 		print >>sys.stderr, o['status']
 		if o['status'] != "Normal" or o['status'] != lastStatus:
 			# Play message audio if not Normal status
-			os.system('killall aplay 2>/dev/null; pico2wave -w /tmp/alert.wav "'+o['message']+'" && aplay /tmp/alert.wav && rm /tmp/alert.wav &')
+			#os.system('killall aplay 2>/dev/null; pico2wave -w /tmp/alert.wav "'+o['message']+'" && aplay /tmp/alert.wav && rm /tmp/alert.wav &')
+			os.system('killall espeak 2>/dev/null; espeak --stdout "'+o['message']+'" | aplay &')
 		lastStatus = o['status']
 		
