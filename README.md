@@ -1,6 +1,8 @@
 # notifyReceive
 This docker is used to receive authenticated muticast messages and say the contents of the message using text to speech
 
+Note: This is for ARM based processors.
+
 ## 3 Environmental Variables should be defined:
 - notify_multicast=[ Multicast IP ]
 - notify_port=[ Integer 1024-65535 ]
@@ -18,7 +20,7 @@ notify_totp_seed=base32secret3232
 
 ## Example Run Command
 ```
-docker run -env notify_multicast=239.0.0.1 -env notify_port=10000 -env notify_totp_seed=base32secret3232 --device /dev/snd gpocali/notifyreceive:latest
+docker run -e notify_multicast=239.0.0.1 -e notify_port=10000 -e notify_totp_seed=base32secret3232 --device /dev/snd:/dev/snd gpocali/notifyreceive:latest
 ```
 
-This docker is currently in Alpha, meaning that while core functionality has been tested, there is potential for bugs or anomalies that were not anticipated being present in runtime that may cause the docker to exit unexpectedly. There is no warranty or guarantees expressed or implied with the use of this docker or its constituent code.
+This docker is currently in Alpha, meaning that this docker is still under development. There is no warranty or guarantees expressed or implied with the use of this docker or its constituent code.
